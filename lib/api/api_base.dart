@@ -1,0 +1,1 @@
+final BASE_URL_QURAN = "https://api.quran.sutanlab.id";
