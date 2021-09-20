@@ -14,5 +14,13 @@ class SurahRepository{
     return SurahResponse.fromJson(response);
   }
 
+  Future<DetailSurahResponse> getDetailSurah(int id) async {
+    final response = await _provider.get("/surah/$id", headers: {
+      // HttpHeaders.authorizationHeader: 'Bearer $_token',
+      HttpHeaders.contentTypeHeader: 'application/json',
+    });
+    return DetailSurahResponse.fromJson(response);
+  }
+
 
 }

@@ -102,7 +102,7 @@ class ApiProvider {
       case 200:
         var responseJson = json.decode(response.body.toString());
 
-        final statusCode = responseJson['status'];
+        final statusCode = responseJson['code'].toString();
         final message = responseJson['message'];
         final String firstCode = statusCode[0];
 

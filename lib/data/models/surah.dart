@@ -28,6 +28,34 @@ class SurahResponse {
     };
 }
 
+class DetailSurahResponse {
+    DetailSurahResponse({
+        @required this.code,
+        @required this.status,
+        @required this.message,
+        @required this.data,
+    });
+
+    int code;
+    String status;
+    String message;
+    Surah data;
+
+    factory DetailSurahResponse.fromJson(Map<String, dynamic> json) => DetailSurahResponse(
+        code: json["code"],
+        status: json["status"],
+        message: json["message"],
+        data: Surah.fromJson(json["data"])
+    );
+
+    Map<String, dynamic> toJson() => {
+        "code": code,
+        "status": status,
+        "message": message,
+        "data": data.toJson()
+    };
+}
+
 class Surah{
    Surah({
         this.number,
