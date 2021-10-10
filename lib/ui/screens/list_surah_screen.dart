@@ -1,8 +1,14 @@
 import 'package:e_islamic_quran/data/blocs/fetch_all_surah/fetch_all_surah_cubit.dart';
 import 'package:e_islamic_quran/data/models/models.dart';
+import 'package:e_islamic_quran/ui/screens/detail_surah_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+
+import 'package:e_islamic_quran/utils/typography.dart' as AppTypo;
+import 'package:e_islamic_quran/utils/colors.dart' as AppColor;
+import 'package:e_islamic_quran/utils/images.dart' as AppImage;
+import 'package:e_islamic_quran/utils/extensions.dart' as AppExt;
 
 class ListSurahScreen extends StatefulWidget {
   const ListSurahScreen({Key key}) : super(key: key);
@@ -75,21 +81,26 @@ class ListSurahItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(surah.nameSurah.transliteration.indo),
-              Text(surah.nameSurah.short),
-              Text(surah.nameSurah.translation.indo)
-            ],
-          ),
-          Icon(FlutterIcons.chevron_right_mco)
+    return InkWell(
+      onTap: (){
+        AppExt.pushScreen(context, DetailSurahScreen(surahId: surah.number,nameSurah: surah.nameSurah.transliteration.indo,));
+      },
+      child: Container(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(surah.nameSurah.transliteration.indo),
+                Text(surah.nameSurah.short),
+                Text(surah.nameSurah.translation.indo)
+              ],
+            ),
+            Icon(FlutterIcons.chevron_right_mco)
 
-        ],
+          ],
+        ),
       ),
     );
   }

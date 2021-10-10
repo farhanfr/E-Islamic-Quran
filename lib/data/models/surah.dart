@@ -64,6 +64,7 @@ class Surah{
         this.nameSurah,
         this.revelation,
         this.tafsir,
+        // this.verses
     });
     
     int number;
@@ -72,6 +73,7 @@ class Surah{
     NameSurah nameSurah;
     Revelation revelation;
     Tafsir tafsir;
+    // Verses verses;
 
     factory Surah.fromJson(Map<String, dynamic> json) => Surah(
         number: json["number"],
@@ -80,6 +82,7 @@ class Surah{
         nameSurah: NameSurah.fromJson(json["name"]),
         revelation: Revelation.fromJson(json["revelation"]),
         tafsir: Tafsir.fromJson(json["tafsir"]),
+        // verses: Verses.fromJson(json["verses"])
     );
 
     Map<String, dynamic> toJson() => {
@@ -89,6 +92,7 @@ class Surah{
         "name": nameSurah.toJson(),
         "revelation": revelation.toJson(),
         "tafsir": tafsir.toJson(),
+        // "verses": verses.toJson()
     };
 }
 
@@ -182,6 +186,53 @@ class Translation {
     };
 }
 
+// class Verses{
+//   Verses({
+        
+//         this.meta,
+//     });
 
+//     Meta meta;
+
+//     factory Verses.fromJson(Map<String, dynamic> json) => Verses(
+//         meta: Meta.fromJson(json["meta"]),
+//     );
+
+//     Map<String, dynamic> toJson() => {
+//         "meta": meta.toJson(),
+//     };
+// }
+
+// class Meta {
+//     Meta({
+//         this.juz,
+//         this.page,
+//         this.manzil,
+//         this.ruku,
+//         this.hizbQuarter,
+//     });
+
+//     int juz;
+//     int page;
+//     int manzil;
+//     int ruku;
+//     int hizbQuarter;
+
+//     factory Meta.fromJson(Map<String, dynamic> json) => Meta(
+//         juz: json["juz"],
+//         page: json["page"],
+//         manzil: json["manzil"],
+//         ruku: json["ruku"],
+//         hizbQuarter: json["hizbQuarter"],
+//     );
+
+//     Map<String, dynamic> toJson() => {
+//         "juz": juz,
+//         "page": page,
+//         "manzil": manzil,
+//         "ruku": ruku,
+//         "hizbQuarter": hizbQuarter,
+//     };
+// }
 
 
