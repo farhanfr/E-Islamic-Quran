@@ -8,3 +8,29 @@ abstract class FetchDetailAyatState extends Equatable {
 }
 
 class FetchDetailAyatInitial extends FetchDetailAyatState {}
+
+
+class FetchDetailAyatLoading extends FetchDetailAyatState {}
+
+class FetchDetailAyatSuccess extends FetchDetailAyatState {
+  FetchDetailAyatSuccess(this.data);
+
+  final Ayat data;
+
+  @override
+  List<Object> get props => [data];
+}
+
+class FetchDetailAyatFailure extends FetchDetailAyatState {
+  final ErrorType type;
+  final String message;
+
+  FetchDetailAyatFailure({this.type = ErrorType.general, this.message});
+
+  FetchDetailAyatFailure.network(String message): this(type: ErrorType.network, message: message);
+  FetchDetailAyatFailure.general(String message): this(type: ErrorType.general, message: message);
+
+  @override
+  List<Object> get props => [message];
+}
+
