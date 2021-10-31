@@ -1,4 +1,5 @@
 import 'package:e_islamic_quran/data/blocs/fetch_detail_surah/fetch_detail_surah_cubit.dart';
+import 'package:e_islamic_quran/ui/screens/screens.dart';
 import 'package:e_islamic_quran/ui/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
@@ -163,7 +164,7 @@ class _DetailSurahScreenState extends State<DetailSurahScreen> {
                                     // isSmall: true,
                                     isUpperCase: false,
                                     onPressed: (){
-                                      //
+                                     AppExt.pushScreen(context, DetailAyatScreen(numberSurah: fetchDetailSurahState.detailSurah.number, numberAyat: 1)); 
                                     }
                                   ),
                                 )
