@@ -12,7 +12,7 @@ class ApiProvider {
   Future<dynamic> get(dynamic url, {Map<String, String> headers}) async {
     var responseJson;
     try {
-      final response = await http.get(_baseUrl + url, headers: headers);
+      final response = await http.get(Uri.parse(_baseUrl + url), headers: headers);
 
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -26,7 +26,7 @@ class ApiProvider {
     var responseJson;
     try {
       final response =
-          await http.post(_baseUrl + url, body: body, headers: headers);
+          await http.post(Uri.parse(_baseUrl + url), body: body, headers: headers);
 
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -40,7 +40,7 @@ class ApiProvider {
     var responseJson;
     try {
       final response =
-          await http.put(_baseUrl + url, body: body, headers: headers);
+          await http.put(Uri.parse(_baseUrl + url) , body: body, headers: headers);
 
       responseJson = _returnResponse(response);
     } on SocketException {
@@ -52,7 +52,7 @@ class ApiProvider {
   Future<dynamic> delete(String url, {Map<String, String> headers}) async {
     var responseJson;
     try {
-      final response = await http.delete(_baseUrl + url, headers: headers);
+      final response = await http.delete(Uri.parse(_baseUrl + url), headers: headers);
 
       responseJson = _returnResponse(response);
     } on SocketException {
