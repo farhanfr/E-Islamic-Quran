@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:e_islamic_quran/utils/typography.dart' as AppTypo;
 import 'package:e_islamic_quran/utils/colors.dart' as AppColor;
 import 'package:e_islamic_quran/utils/extensions.dart' as AppExt;
+import 'package:flutter_icons/flutter_icons.dart';
 
 class DetailAyatScreen extends StatefulWidget {
   const DetailAyatScreen(
@@ -22,7 +23,6 @@ class DetailAyatScreen extends StatefulWidget {
 }
 
 class _DetailAyatScreenState extends State<DetailAyatScreen> {
-
   AudioPlayer audioPlayer = AudioPlayer();
   PlayerState playerState = PlayerState.PAUSED;
 
@@ -35,7 +35,7 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
           surahNumber: widget.numberSurah, ayatNumber: widget.numberAyat);
     audioPlayer.onPlayerStateChanged.listen((PlayerState s) {
       setState(() {
-        playerState = s;        
+        playerState = s;
       });
     });
     super.initState();
@@ -45,18 +45,16 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
   void dispose() {
     _fetchDetailAyatCubit.close();
     audioPlayer.release();
-    audioPlayer.dispose();  
+    audioPlayer.dispose();
     super.dispose();
   }
 
-  playAyat(String url) async{
+  playAyat(String url) async {
     await audioPlayer.play(url);
-    AppExt.popScreen(context);
   }
 
-  stopAyat() async{
+  stopAyat() async {
     await audioPlayer.stop();
-    AppExt.popScreen(context);
   }
 
   @override
@@ -138,63 +136,85 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
                                     )),
                                 Expanded(
                                     child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
                                   children: [
+                                    detailAyatState.data.number.inSurah ==
+                                            detailAyatState
+                                                .data.surah.numberOfVerses
+                                        ? SizedBox()
+                                        : Expanded(
+                                            child: ElevatedButton(
+                                              onPressed: () {
+                                                _fetchDetailAyatCubit
+                                                  ..fetchDetailAyat(
+                                                      surahNumber:
+                                                          widget.numberSurah,
+                                                      ayatNumber:
+                                                          detailAyatState
+                                                                  .data
+                                                                  .number
+                                                                  .inSurah +
+                                                              1);
+                                              },
+                                              child: Icon(FlutterIcons.left_ant,
+                                                  size: 30,
+                                                  color: Colors.white),
+                                              style: ElevatedButton.styleFrom(
+                                                shape: CircleBorder(),
+                                                fixedSize: Size(80, 80),
+                                                primary: AppColor
+                                                    .primaryApp, // <-- Button color
+                                                onPrimary: AppColor
+                                                    .primaryAppDark, // <-- Splash color
+                                              ),
+                                            ),
+                                          ),
                                     Expanded(
-                                        child: Visibility(
-                                      visible:
-                                          detailAyatState.data.number.inSurah ==
-                                                  detailAyatState
-                                                      .data.surah.numberOfVerses
-                                              ? false
-                                              : true,
-                                      child: RoundedButton.contained(
-                                          label: "Next",
-                                          isUpperCase: false,
-                                          isSmall: true,
-                                          onPressed: () {
-                                            _fetchDetailAyatCubit
-                                              ..fetchDetailAyat(
-                                                  surahNumber:
-                                                      widget.numberSurah,
-                                                  ayatNumber: detailAyatState
-                                                          .data.number.inSurah +
-                                                      1);
-                                          }),
-                                    )),
-                                    SizedBox(
-                                      width:
-                                          detailAyatState.data.number.inSurah ==
-                                                  detailAyatState
-                                                      .data.surah.numberOfVerses
-                                              ? 0
-                                              : 25,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          playerState == PlayerState.PLAYING
+                                              ? stopAyat()
+                                              : playAyat(detailAyatState
+                                                  .data.audio.primary);
+                                        },
+                                        child: Icon(
+                                            playerState == PlayerState.PLAYING
+                                                ? FlutterIcons.stop_mco
+                                                : FlutterIcons.play_mco,
+                                            size: 30,
+                                            color: Colors.white),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: CircleBorder(),
+                                          fixedSize: Size(80, 80),
+                                          primary: AppColor
+                                              .primaryApp, // <-- Button color
+                                          onPrimary: AppColor
+                                              .primaryAppDark, // <-- Splash color
+                                        ),
+                                      ),
                                     ),
                                     Expanded(
-                                        flex: 2,
-                                        child: RoundedButton.contained(
-                                            label: "Menu Ayat",
-                                            isUpperCase: false,
-                                            onPressed: () {
-                                              menuAyatBottomSheet(
-                                                  context, _screenWidth,detailAyatState.data);
-                                            })),
-                                    SizedBox(
-                                      width:
-                                          detailAyatState.data.number.inSurah ==
-                                                  1
-                                              ? 0
-                                              : 25,
+                                      child: ElevatedButton(
+                                        onPressed: () {
+                                          menuAyatBottomSheet(context,_screenWidth,detailAyatState.data);
+                                        },
+                                        child: Icon(FlutterIcons.menu_ent,
+                                            size: 30, color: Colors.white),
+                                        style: ElevatedButton.styleFrom(
+                                          shape: CircleBorder(),
+                                          fixedSize: Size(80, 80),
+                                          primary: AppColor
+                                              .primaryApp, // <-- Button color
+                                          onPrimary: AppColor
+                                              .primaryAppDark, // <-- Splash color
+                                        ),
+                                      ),
                                     ),
-                                    Visibility(
-                                      visible:
-                                          detailAyatState.data.number.inSurah ==
-                                                  1
-                                              ? false
-                                              : true,
-                                      child: Expanded(
-                                          child: RoundedButton.contained(
-                                              label: "Prev",
-                                              isUpperCase: false,
+                                    detailAyatState.data.number.inSurah == 1
+                                        ? SizedBox()
+                                        : Expanded(
+                                            child: ElevatedButton(
                                               onPressed: () {
                                                 _fetchDetailAyatCubit
                                                   ..fetchDetailAyat(
@@ -206,8 +226,21 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
                                                                   .number
                                                                   .inSurah -
                                                               1);
-                                              })),
-                                    ),
+                                              },
+                                              child: Icon(
+                                                  FlutterIcons.right_ant,
+                                                  size: 30,
+                                                  color: Colors.white),
+                                              style: ElevatedButton.styleFrom(
+                                                shape: CircleBorder(),
+                                                fixedSize: Size(80, 80),
+                                                primary: AppColor
+                                                    .primaryApp, // <-- Button color
+                                                onPrimary: AppColor
+                                                    .primaryAppDark, // <-- Splash color
+                                              ),
+                                            ),
+                                          )
                                   ],
                                 )),
                               ],
@@ -218,7 +251,8 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
     );
   }
 
-  Future menuAyatBottomSheet(BuildContext context, double _screenWidth, Ayat ayat) {
+  Future menuAyatBottomSheet(
+      BuildContext context, double _screenWidth, Ayat ayat) {
     return showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
@@ -228,7 +262,7 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
         )),
         builder: (context) {
           return StatefulBuilder(
-            builder: (BuildContext ctx,StateSetter setState ){
+              builder: (BuildContext ctx, StateSetter setState) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -249,23 +283,12 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
                       padding: EdgeInsets.symmetric(
                           horizontal: _screenWidth * (5 / 100)),
                       children: [
-                        InkWell(
-                          onTap: (){
-                            playerState == PlayerState.PLAYING ? 
-                            stopAyat() : playAyat(ayat.audio.primary) ;
-                          } ,
-                          child: Text(playerState == PlayerState.PLAYING ? "Stop"  : "Play")
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
                         Text("Tandai sebagai terakhir dibaca"),
                       ],
                     )),
               ],
             );
           });
-
         });
   }
 }
