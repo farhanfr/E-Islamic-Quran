@@ -2,6 +2,7 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:e_islamic_quran/data/blocs/fetch_detail_ayat/fetch_detail_ayat_cubit.dart';
 import 'package:e_islamic_quran/data/models/ayat.dart';
 import 'package:e_islamic_quran/ui/widgets/rounded_button.dart';
+import 'package:e_islamic_quran/utils/get_storage_ext.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -9,6 +10,7 @@ import 'package:e_islamic_quran/utils/typography.dart' as AppTypo;
 import 'package:e_islamic_quran/utils/colors.dart' as AppColor;
 import 'package:e_islamic_quran/utils/extensions.dart' as AppExt;
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:get_storage/get_storage.dart';
 
 class DetailAyatScreen extends StatefulWidget {
   const DetailAyatScreen(
@@ -28,25 +30,39 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
 
   FetchDetailAyatCubit _fetchDetailAyatCubit;
 
+  Map<String,dynamic> dataAyat;
+
+  // final box = GetStorage();
+
   @override
   void initState() {
     _fetchDetailAyatCubit = FetchDetailAyatCubit()
       ..fetchDetailAyat(
           surahNumber: widget.numberSurah, ayatNumber: widget.numberAyat);
+
+    if (GetStorageExt().getStorageRead('keyDataAyat') != null) {
+      print(GetStorageExt().getStorageRead('keyDataAyat').toString());
+      dataAyat = GetStorageExt().getStorageRead('keyDataAyat');
+    }else{
+      print("KOSONG DATA");
+    }
+    
     audioPlayer.onPlayerStateChanged.listen((PlayerState s) {
-      setState(() {
-        playerState = s;
-      });
+      if (mounted) {
+        setState(() {
+          playerState = s;
+        });  
+      }
     });
     super.initState();
   }
 
   @override
   void dispose() {
-    _fetchDetailAyatCubit.close();
-    audioPlayer.release();
-    audioPlayer.dispose();
     super.dispose();
+    _fetchDetailAyatCubit.close();
+    // audioPlayer.release();
+    audioPlayer.dispose();
   }
 
   playAyat(String url) async {
@@ -156,6 +172,7 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
                                                                   .number
                                                                   .inSurah +
                                                               1);
+                                                // dataAyat = GetStorageExt().getStorageRead("keyDataAyat");
                                               },
                                               child: Icon(FlutterIcons.left_ant,
                                                   size: 30,
@@ -226,6 +243,7 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
                                                                   .number
                                                                   .inSurah -
                                                               1);
+                                                  // dataAyat = GetStorageExt().getStorageRead("keyDataAyat");
                                               },
                                               child: Icon(
                                                   FlutterIcons.right_ant,
@@ -283,7 +301,27 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
                       padding: EdgeInsets.symmetric(
                           horizontal: _screenWidth * (5 / 100)),
                       children: [
-                        Text("Tandai sebagai terakhir dibaca"),
+                        InkWell(
+                          onTap: (){
+                            GetStorageExt().saveLastRead({
+                              'nameSurah':ayat.surah.nameSurah.transliteration.indo,
+                              'numberSurah':ayat.surah.number,
+                              'ayat':ayat.number.inSurah,
+                              'juz':ayat.meta.juz
+                            });
+                            dataAyat = GetStorageExt().getStorageRead("keyDataAyat");
+                            AppExt.popScreen(context);
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Tandai sebagai terakhir dibaca"),
+                              dataAyat == null ?
+                              Text("Terakhir dibaca : -") :
+                              Text("Terakhir dibaca : ${dataAyat['nameSurah']} - ayat ${dataAyat['ayat']}")
+                            ],
+                          )
+                        ),
                       ],
                     )),
               ],

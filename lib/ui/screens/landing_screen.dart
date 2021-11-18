@@ -1,5 +1,6 @@
 import 'package:e_islamic_quran/ui/screens/screens.dart';
 import 'package:e_islamic_quran/ui/widgets/rounded_button.dart';
+import 'package:e_islamic_quran/utils/get_storage_ext.dart';
 import 'package:flutter/material.dart';
 
 import 'package:e_islamic_quran/utils/typography.dart' as AppTypo;
@@ -16,10 +17,18 @@ class LandingScreen extends StatefulWidget {
 
 class _LandingScreenState extends State<LandingScreen> {
   bool isGetStartedClicked;
+  bool hasLastRead = false;
+
+  Map<String,dynamic> dataAyat;
 
   @override
   void initState() {
     isGetStartedClicked = false;
+    if (GetStorageExt().getStorageRead("keyDataAyat") != null) {
+      dataAyat= GetStorageExt().getStorageRead("keyDataAyat");
+      hasLastRead=true;
+      print(GetStorageExt().getStorageRead("keyDataAyat").toString());
+    }
     super.initState();
   }
 
@@ -102,7 +111,10 @@ class _LandingScreenState extends State<LandingScreen> {
                       }),
                 ],
               ) :
-              MenuItem()
+              MenuItem(
+                hasLastRead:hasLastRead,
+                dataLastRead: dataAyat,
+              )
             ],
           ),
         ),
@@ -112,7 +124,10 @@ class _LandingScreenState extends State<LandingScreen> {
 }
 
 class MenuItem extends StatelessWidget {
-  const MenuItem({Key key}) : super(key: key);
+  const MenuItem({Key key, this.hasLastRead, this.dataLastRead}) : super(key: key);
+
+  final bool hasLastRead;
+  final Map<String,dynamic> dataLastRead;
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +140,15 @@ class MenuItem extends StatelessWidget {
             AppExt.pushScreen(context, ListSurahScreen());
           }
         ),
+        SizedBox(height: hasLastRead ? 20 : 0,),
+        hasLastRead ?
+        RoundedButton.outlined(
+          label: "Terakhir Dibaca",
+          isUpperCase: false,
+          onPressed: (){
+            AppExt.pushScreen(context, DetailAyatScreen(numberSurah: dataLastRead['numberSurah'], numberAyat: dataLastRead['ayat']));
+          }
+        ):SizedBox(),
         SizedBox(height: 20,),
         RoundedButton.outlined(
           label: "Baca Tafsir", 

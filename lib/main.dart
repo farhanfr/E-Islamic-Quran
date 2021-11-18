@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-
+import 'package:get_storage/get_storage.dart';
 import 'package:e_islamic_quran/ui/screens/screens.dart';
 import 'package:e_islamic_quran/utils/colors.dart' as AppColor;
 
-void main() {
+void main() async {  
+  await GetStorage.init();
   runApp(MyApp());
 }
 
