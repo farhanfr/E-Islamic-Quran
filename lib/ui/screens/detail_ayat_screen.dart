@@ -1,11 +1,15 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:e_islamic_quran/data/blocs/fetch_detail_ayat/fetch_detail_ayat_cubit.dart';
 import 'package:e_islamic_quran/data/models/ayat.dart';
+import 'package:e_islamic_quran/ui/widgets/alert_bottom_sheet.dart';
 import 'package:e_islamic_quran/ui/widgets/edit_text.dart';
 import 'package:e_islamic_quran/ui/widgets/rounded_button.dart';
+import 'package:e_islamic_quran/utils/form_validations.dart';
 import 'package:e_islamic_quran/utils/get_storage_ext.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_boxicons/flutter_boxicons.dart';
 
 import 'package:e_islamic_quran/utils/typography.dart' as AppTypo;
 import 'package:e_islamic_quran/utils/colors.dart' as AppColor;
@@ -26,13 +30,15 @@ class DetailAyatScreen extends StatefulWidget {
 }
 
 class _DetailAyatScreenState extends State<DetailAyatScreen> {
+  FormValidations formValidations = new FormValidations();
   AudioPlayer audioPlayer = AudioPlayer();
   PlayerState playerState = PlayerState.PAUSED;
 
   FetchDetailAyatCubit _fetchDetailAyatCubit;
 
-  Map<String, dynamic> dataAyat;
+  TextEditingController ayatCtrl = TextEditingController();
 
+  Map<String, dynamic> dataAyat;
   bool showAyatCtrl = false;
 
   // final box = GetStorage();
@@ -64,6 +70,7 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
   void dispose() {
     super.dispose();
     _fetchDetailAyatCubit.close();
+    ayatCtrl.dispose();
     // audioPlayer.release();
     audioPlayer.dispose();
   }
@@ -290,132 +297,169 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
           return StatefulBuilder(
               builder: (BuildContext ctx, StateSetter setState) {
             return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-              child: Stack(
-                children: [
-                  ListView(
-                        padding: EdgeInsets.only(
-                            left: _screenWidth * (5 / 100),right: _screenWidth * (5 / 100),top: 60),
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              GetStorageExt().saveLastRead({
-                                'nameSurah':
-                                    ayat.surah.nameSurah.transliteration.indo,
-                                'numberSurah': ayat.surah.number,
-                                'ayat': ayat.number.inSurah,
-                                'juz': ayat.meta.juz
-                              });
-                              dataAyat =
-                                  GetStorageExt().getStorageRead("keyDataAyat");
-                              AppExt.popScreen(context);
-                            },
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("Tandai sebagai terakhir dibaca"),
-                                dataAyat == null
-                                    ? Text("Terakhir dibaca : -")
-                                    : Text(
-                                        "Terakhir dibaca : ${dataAyat['nameSurah']} - ayat ${dataAyat['ayat']}"),
-                              ],
-                            ),
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom),
+                child: Stack(
+                  children: [
+                    ListView(
+                      padding: EdgeInsets.only(
+                          left: _screenWidth * (5 / 100),
+                          right: _screenWidth * (5 / 100),
+                          top: 60),
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            GetStorageExt().saveLastRead({
+                              'nameSurah':
+                                  ayat.surah.nameSurah.transliteration.indo,
+                              'numberSurah': ayat.surah.number,
+                              'ayat': ayat.number.inSurah,
+                              'juz': ayat.meta.juz
+                            });
+                            dataAyat =
+                                GetStorageExt().getStorageRead("keyDataAyat");
+                            AppExt.popScreen(context);
+                          },
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Tandai sebagai terakhir dibaca"),
+                              dataAyat == null
+                                  ? Text("Terakhir dibaca : -")
+                                  : Text(
+                                      "Terakhir dibaca : ${dataAyat['nameSurah']} - ayat ${dataAyat['ayat']}"),
+                            ],
                           ),
-                          Divider(
-                              thickness: 1,
-                              indent: 3,
-                              endIndent: 4,
-                              color: Colors.grey),
-                          InkWell(
-                              onTap: () {
-                                setState(() {
-                                  showAyatCtrl = showAyatCtrl != true ? true : false;
-                                });
-                              },
-                              child: Text("Menuju atau loncat ke ayat")),
-                          showAyatCtrl == true ?
-                          EditText(hintText: "Masukkan ayat") : SizedBox()
-                        ],
-                      ),
-                  Container(
-                    padding: EdgeInsets.symmetric(horizontal: _screenWidth * (25/100),vertical: 20),
-                    width: double.infinity,
-                    height: 50,
-                    color: Colors.white,
-                    child: 
-                    Container(                      
+                        ),
+                        Divider(
+                            thickness: 1,
+                            indent: 3,
+                            endIndent: 4,
+                            color: Colors.grey),
+                        InkWell(
+                            onTap: () {
+                              setState(() {
+                                showAyatCtrl =
+                                    showAyatCtrl != true ? true : false;
+                              });
+                            },
+                            child: Text("Menuju atau loncat ke ayat")),
+                        showAyatCtrl == true
+                            ? EditText(
+                                hintText: "Masukkan ayat",
+                                keyboardType: TextInputType.number,
+                                controller: ayatCtrl,
+                                validator: formValidations.ayatInput,
+                                autoValidateMode: AutovalidateMode.onUserInteraction,
+                                onFieldSubmitted: (value) {
+                                  AppExt.popScreen(context);
+                                  if (int.parse(value) > ayat.surah.numberOfVerses){
+                                    AlertBottomSheet.show(context,
+                                    title: "Pencarian gagal",
+                                    description: "Ayat tidak ditemukan",
+                                    icon: Boxicons.bx_x_circle,
+                                      color: AppColor.red,
+);  
+                                  } else{
+                                    _fetchDetailAyatCubit
+                                    ..fetchDetailAyat(
+                                        surahNumber: widget.numberSurah,
+                                        ayatNumber: int.parse(value));
+                                  }
+                                    
+                                  
+                                  
+                                  
+                                },
+                              )
+                            : SizedBox()
+                      ],
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                          // horizontal: _screenWidth * (25 / 100), 
+                          vertical: 20),
+                      width: double.infinity,
+                      height: 50,
                       decoration: BoxDecoration(
-                        color: AppColor.textSecondary,
-                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(15))
+                      ),
+                      child: Center(
+                        child: Container(
+                          width: _screenWidth * (25 / 100),
+                          decoration: BoxDecoration(
+                            color: AppColor.textSecondary,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ],
-              )
-              // Column(
-              //   crossAxisAlignment: CrossAxisAlignment.start,
-              //   children: [
-              //     Expanded(
-              //         child: Center(
-              //       child: Container(
-              //         width: 150,
-              //         height: 10,
-              //         decoration: BoxDecoration(
-              //           color: AppColor.textSecondary,
-              //           borderRadius: BorderRadius.circular(20),
-              //         ),
-              //       ),
-              //     )),
-              //     Expanded(
-              //         flex: 5,
-              //         child: ListView(
-              //           padding: EdgeInsets.symmetric(
-              //               horizontal: _screenWidth * (5 / 100)),
-              //           children: [
-              //             InkWell(
-              //               onTap: () {
-              //                 GetStorageExt().saveLastRead({
-              //                   'nameSurah':
-              //                       ayat.surah.nameSurah.transliteration.indo,
-              //                   'numberSurah': ayat.surah.number,
-              //                   'ayat': ayat.number.inSurah,
-              //                   'juz': ayat.meta.juz
-              //                 });
-              //                 dataAyat =
-              //                     GetStorageExt().getStorageRead("keyDataAyat");
-              //                 AppExt.popScreen(context);
-              //               },
-              //               child: Column(
-              //                 crossAxisAlignment: CrossAxisAlignment.start,
-              //                 children: [
-              //                   Text("Tandai sebagai terakhir dibaca"),
-              //                   dataAyat == null
-              //                       ? Text("Terakhir dibaca : -")
-              //                       : Text(
-              //                           "Terakhir dibaca : ${dataAyat['nameSurah']} - ayat ${dataAyat['ayat']}"),
-              //                 ],
-              //               ),
-              //             ),
-              //             Divider(
-              //                 thickness: 1,
-              //                 indent: 3,
-              //                 endIndent: 4,
-              //                 color: Colors.grey),
-              //             InkWell(
-              //                 onTap: () {
-              //                   setState(() {
-              //                     showAyatCtrl = showAyatCtrl != true ? true : false;
-              //                   });
-              //                 },
-              //                 child: Text("Menuju atau loncat ke ayat")),
-              //             showAyatCtrl == true ?
-              //             EditText(hintText: "Masukkan ayat") : SizedBox()
-              //           ],
-              //         )),
-              //   ],
-              // ),
-            );
+                  ],
+                )
+                // Column(
+                //   crossAxisAlignment: CrossAxisAlignment.start,
+                //   children: [
+                //     Expanded(
+                //         child: Center(
+                //       child: Container(
+                //         width: 150,
+                //         height: 10,
+                //         decoration: BoxDecoration(
+                //           color: AppColor.textSecondary,
+                //           borderRadius: BorderRadius.circular(20),
+                //         ),
+                //       ),
+                //     )),
+                //     Expanded(
+                //         flex: 5,
+                //         child: ListView(
+                //           padding: EdgeInsets.symmetric(
+                //               horizontal: _screenWidth * (5 / 100)),
+                //           children: [
+                //             InkWell(
+                //               onTap: () {
+                //                 GetStorageExt().saveLastRead({
+                //                   'nameSurah':
+                //                       ayat.surah.nameSurah.transliteration.indo,
+                //                   'numberSurah': ayat.surah.number,
+                //                   'ayat': ayat.number.inSurah,
+                //                   'juz': ayat.meta.juz
+                //                 });
+                //                 dataAyat =
+                //                     GetStorageExt().getStorageRead("keyDataAyat");
+                //                 AppExt.popScreen(context);
+                //               },
+                //               child: Column(
+                //                 crossAxisAlignment: CrossAxisAlignment.start,
+                //                 children: [
+                //                   Text("Tandai sebagai terakhir dibaca"),
+                //                   dataAyat == null
+                //                       ? Text("Terakhir dibaca : -")
+                //                       : Text(
+                //                           "Terakhir dibaca : ${dataAyat['nameSurah']} - ayat ${dataAyat['ayat']}"),
+                //                 ],
+                //               ),
+                //             ),
+                //             Divider(
+                //                 thickness: 1,
+                //                 indent: 3,
+                //                 endIndent: 4,
+                //                 color: Colors.grey),
+                //             InkWell(
+                //                 onTap: () {
+                //                   setState(() {
+                //                     showAyatCtrl = showAyatCtrl != true ? true : false;
+                //                   });
+                //                 },
+                //                 child: Text("Menuju atau loncat ke ayat")),
+                //             showAyatCtrl == true ?
+                //             EditText(hintText: "Masukkan ayat") : SizedBox()
+                //           ],
+                //         )),
+                //   ],
+                // ),
+                );
           });
         });
   }
