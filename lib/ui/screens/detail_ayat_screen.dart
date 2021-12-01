@@ -117,164 +117,190 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                        "Juz - ${detailAyatState.data.meta.juz}"),
                                     Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                            "${detailAyatState.data.surah.nameSurah.transliteration.indo}"),
+                                            "Juz",style: AppTypo.body1,),
+                                        SizedBox(height: 5,),
                                         Text(
-                                            "${detailAyatState.data.surah.nameSurah.translation.indo}"),
+                                          detailAyatState.data.meta.juz.toString(),
+                                          style: AppTypo.body2,
+                                        )
                                       ],
                                     ),
-                                    Text(
-                                        "Ayat - ${detailAyatState.data.number.inSurah}"),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                            "${detailAyatState.data.surah.nameSurah.transliteration.indo}",style: AppTypo.body1.copyWith(fontWeight: FontWeight.w700)),
+                                        Text(
+                                            "${detailAyatState.data.surah.nameSurah.translation.indo}",style: AppTypo.body1.copyWith(fontSize: 14)),
+                                      ],
+                                    ),
+                                    Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                            "Ayat",style: AppTypo.body1,),
+                                        SizedBox(height: 5,),
+                                        Text(detailAyatState.data.number.inSurah.toString(),style: AppTypo.body2,)
+                                      ],
+                                    ),
                                   ],
                                 )),
                                 Expanded(
                                     flex: 8,
                                     child: SingleChildScrollView(
                                       child: Container(
-                                        color: Colors.amber,
+                                        // color: Colors.amber,
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.end,
                                           children: [
+                                            SizedBox(height: 18,),
                                             Text(
                                               detailAyatState.data.text.arab,
-                                              style: AppTypo.body1,
+                                              style: AppTypo.body1.copyWith(fontSize: 22),
                                               textAlign: TextAlign.right,
                                             ),
+                                            SizedBox(height: 15,),
                                             Text(
                                               detailAyatState
                                                   .data.text.transliteration.en,
-                                              style: AppTypo.body1,
+                                              style: AppTypo.body1.copyWith(fontSize: 16,color: AppColor.primaryAppDark,fontWeight: FontWeight.w700),
                                               textAlign: TextAlign.left,
                                             ),
+                                            SizedBox(height: 15,),
                                             Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(detailAyatState
-                                                    .data.translation.indo))
+                                                    .data.translation.indo,style: AppTypo.body1.copyWith(fontSize: 15),))
+                                            ,SizedBox(height: 20,),
                                           ],
                                         ),
                                       ),
                                     )),
                                 Expanded(
-                                    child: Row(
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 10),
+                                      child: Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                   children: [
-                                    detailAyatState.data.number.inSurah ==
-                                            detailAyatState
-                                                .data.surah.numberOfVerses
-                                        ? SizedBox()
-                                        : Expanded(
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                _fetchDetailAyatCubit
-                                                  ..fetchDetailAyat(
-                                                      surahNumber:
-                                                          widget.numberSurah,
-                                                      ayatNumber:
-                                                          detailAyatState
-                                                                  .data
-                                                                  .number
-                                                                  .inSurah +
-                                                              1);
-                                                // dataAyat = GetStorageExt().getStorageRead("keyDataAyat");
-                                              },
-                                              child: Icon(FlutterIcons.left_ant,
-                                                  size: 30,
-                                                  color: Colors.white),
-                                              style: ElevatedButton.styleFrom(
-                                                shape: CircleBorder(),
-                                                fixedSize: Size(80, 80),
-                                                primary: AppColor
-                                                    .primaryApp, // <-- Button color
-                                                onPrimary: AppColor
-                                                    .primaryAppDark, // <-- Splash color
+                                      detailAyatState.data.number.inSurah ==
+                                              detailAyatState
+                                                  .data.surah.numberOfVerses
+                                          ? SizedBox()
+                                          : Expanded(
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  _fetchDetailAyatCubit
+                                                    ..fetchDetailAyat(
+                                                        surahNumber:
+                                                            widget.numberSurah,
+                                                        ayatNumber:
+                                                            detailAyatState
+                                                                    .data
+                                                                    .number
+                                                                    .inSurah +
+                                                                1);
+                                                  // dataAyat = GetStorageExt().getStorageRead("keyDataAyat");
+                                                },
+                                                child: Icon(FlutterIcons.left_ant,
+                                                    size: 30,
+                                                    color: Colors.white),
+                                                style: ElevatedButton.styleFrom(
+                                                  shape: CircleBorder(),
+                                                  fixedSize: Size(80, 80),
+                                                  primary: AppColor
+                                                      .primaryApp, // <-- Button color
+                                                  onPrimary: AppColor
+                                                      .primaryAppDark, // <-- Splash color
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          playerState == PlayerState.PLAYING
-                                              ? stopAyat()
-                                              : playAyat(detailAyatState
-                                                  .data.audio.primary);
-                                        },
-                                        child: Icon(
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
                                             playerState == PlayerState.PLAYING
-                                                ? FlutterIcons.stop_mco
-                                                : FlutterIcons.play_mco,
-                                            size: 30,
-                                            color: Colors.white),
-                                        style: ElevatedButton.styleFrom(
-                                          shape: CircleBorder(),
-                                          fixedSize: Size(80, 80),
-                                          primary: AppColor
-                                              .primaryApp, // <-- Button color
-                                          onPrimary: AppColor
-                                              .primaryAppDark, // <-- Splash color
+                                                ? stopAyat()
+                                                : playAyat(detailAyatState
+                                                    .data.audio.primary);
+                                          },
+                                          child: Icon(
+                                              playerState == PlayerState.PLAYING
+                                                  ? FlutterIcons.stop_mco
+                                                  : FlutterIcons.play_mco,
+                                              size: 30,
+                                              color: Colors.white),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: CircleBorder(),
+                                            fixedSize: Size(80, 80),
+                                            primary: AppColor
+                                                .primaryApp, // <-- Button color
+                                            onPrimary: AppColor
+                                                .primaryAppDark, // <-- Splash color
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          menuAyatBottomSheet(
-                                              context,
-                                              _screenWidth,
-                                              detailAyatState.data);
-                                        },
-                                        child: Icon(FlutterIcons.menu_ent,
-                                            size: 30, color: Colors.white),
-                                        style: ElevatedButton.styleFrom(
-                                          shape: CircleBorder(),
-                                          fixedSize: Size(80, 80),
-                                          primary: AppColor
-                                              .primaryApp, // <-- Button color
-                                          onPrimary: AppColor
-                                              .primaryAppDark, // <-- Splash color
+                                      Expanded(
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            menuAyatBottomSheet(
+                                                context,
+                                                _screenWidth,
+                                                detailAyatState.data);
+                                          },
+                                          child: Icon(FlutterIcons.menu_ent,
+                                              size: 30, color: Colors.white),
+                                          style: ElevatedButton.styleFrom(
+                                            shape: CircleBorder(),
+                                            fixedSize: Size(80, 80),
+                                            primary: AppColor
+                                                .primaryApp, // <-- Button color
+                                            onPrimary: AppColor
+                                                .primaryAppDark, // <-- Splash color
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    detailAyatState.data.number.inSurah == 1
-                                        ? SizedBox()
-                                        : Expanded(
-                                            child: ElevatedButton(
-                                              onPressed: () {
-                                                _fetchDetailAyatCubit
-                                                  ..fetchDetailAyat(
-                                                      surahNumber:
-                                                          widget.numberSurah,
-                                                      ayatNumber:
-                                                          detailAyatState
-                                                                  .data
-                                                                  .number
-                                                                  .inSurah -
-                                                              1);
-                                                // dataAyat = GetStorageExt().getStorageRead("keyDataAyat");
-                                              },
-                                              child: Icon(
-                                                  FlutterIcons.right_ant,
-                                                  size: 30,
-                                                  color: Colors.white),
-                                              style: ElevatedButton.styleFrom(
-                                                shape: CircleBorder(),
-                                                fixedSize: Size(80, 80),
-                                                primary: AppColor
-                                                    .primaryApp, // <-- Button color
-                                                onPrimary: AppColor
-                                                    .primaryAppDark, // <-- Splash color
+                                      detailAyatState.data.number.inSurah == 1
+                                          ? SizedBox()
+                                          : Expanded(
+                                              child: ElevatedButton(
+                                                onPressed: () {
+                                                  _fetchDetailAyatCubit
+                                                    ..fetchDetailAyat(
+                                                        surahNumber:
+                                                            widget.numberSurah,
+                                                        ayatNumber:
+                                                            detailAyatState
+                                                                    .data
+                                                                    .number
+                                                                    .inSurah -
+                                                                1);
+                                                  // dataAyat = GetStorageExt().getStorageRead("keyDataAyat");
+                                                },
+                                                child: Icon(
+                                                    FlutterIcons.right_ant,
+                                                    size: 30,
+                                                    color: Colors.white),
+                                                style: ElevatedButton.styleFrom(
+                                                  shape: CircleBorder(),
+                                                  fixedSize: Size(80, 80),
+                                                  primary: AppColor
+                                                      .primaryApp, // <-- Button color
+                                                  onPrimary: AppColor
+                                                      .primaryAppDark, // <-- Splash color
+                                                ),
                                               ),
-                                            ),
-                                          )
+                                            )
                                   ],
-                                )),
+                                ),
+                                    )),
                               ],
                             ),
                           )
@@ -350,26 +376,25 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
                                 keyboardType: TextInputType.number,
                                 controller: ayatCtrl,
                                 validator: formValidations.ayatInput,
-                                autoValidateMode: AutovalidateMode.onUserInteraction,
+                                autoValidateMode:
+                                    AutovalidateMode.onUserInteraction,
                                 onFieldSubmitted: (value) {
                                   AppExt.popScreen(context);
-                                  if (int.parse(value) > ayat.surah.numberOfVerses){
-                                    AlertBottomSheet.show(context,
-                                    title: "Pencarian gagal",
-                                    description: "Ayat tidak ditemukan",
-                                    icon: Boxicons.bx_x_circle,
+                                  if (int.parse(value) >
+                                      ayat.surah.numberOfVerses) {
+                                    AlertBottomSheet.show(
+                                      context,
+                                      title: "Pencarian gagal",
+                                      description: "Ayat tidak ditemukan",
+                                      icon: Boxicons.bx_x_circle,
                                       color: AppColor.red,
-);  
-                                  } else{
+                                    );
+                                  } else {
                                     _fetchDetailAyatCubit
-                                    ..fetchDetailAyat(
-                                        surahNumber: widget.numberSurah,
-                                        ayatNumber: int.parse(value));
+                                      ..fetchDetailAyat(
+                                          surahNumber: widget.numberSurah,
+                                          ayatNumber: int.parse(value));
                                   }
-                                    
-                                  
-                                  
-                                  
                                 },
                               )
                             : SizedBox()
@@ -377,14 +402,14 @@ class _DetailAyatScreenState extends State<DetailAyatScreen> {
                     ),
                     Container(
                       padding: EdgeInsets.symmetric(
-                          // horizontal: _screenWidth * (25 / 100), 
+                          // horizontal: _screenWidth * (25 / 100),
                           vertical: 20),
                       width: double.infinity,
                       height: 50,
                       decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.vertical(top: Radius.circular(15))
-                      ),
+                          color: Colors.white,
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(15))),
                       child: Center(
                         child: Container(
                           width: _screenWidth * (25 / 100),
